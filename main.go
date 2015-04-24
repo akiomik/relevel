@@ -13,13 +13,13 @@ import (
 )
 
 var (
-	historyFile = "/tmp/.ldbc_history"
+	historyFile = "/tmp/." + appName + "_history"
 	commands    = []string{"GET", "PUT", "DELETE", "KEYS", "HELP"}
-	appName     = "ldbc"
+	appName     = "relevel"
 	appVersion  = "0.0.1"
 	appAuthor   = "Akiomi Kamakura"
 	appEmail    = "akiomik@gmail.com"
-	appUsage    = "leveldb cli client"
+	appUsage    = "REPL for leveldb"
 	prompt      = appName + "> "
 )
 

@@ -1,44 +1,44 @@
-# ldbc
-Command-line client for LevelDB
+# relevel
+REPL for LevelDB
 
 ## Installation
 
 ```bash
-go get github.com/akiomik/ldbc
+go get github.com/akiomik/relevel
 ```
 
 ## Usage
 
 ```bash
 # create new database
-$ ldbc new awesome-data
+$ relevel new awesome-data
 
 # launch REPL
-$ ldbc console awesome-data
-ldbc - 0.0.1
+$ relevel console awesome-data
+relevel - 0.0.1
 
-ldbc> keys
+relevel> keys
 
 Found: 0 keys
 
-ldbc> put scala play
+relevel> put scala play
 Created: scala
 
-ldbc> put haskell yesod
+relevel> put haskell yesod
 Created: haskell
 
-ldbc> get scala
+relevel> get scala
 play
 
 Got: scala
 
-ldbc> keys
+relevel> keys
 haskell
 scala
 
 Found: 2 keys
 
-ldbc>
+relevel>
 ```
 
 ## Other solutions
