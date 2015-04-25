@@ -42,5 +42,7 @@ relevel>
 ```
 
 ## Other solutions
+* [ldb](https://github.com/hij1nx/ldb)
 * [lev](https://github.com/hij1nx/lev)
 * [RockDB Ldb tool](https://github.com/facebook/rocksdb/wiki/Ldb-Tool)
+* [level-repl](https://github.com/lapwinglabs/leveldb-repl)
