@@ -1,6 +1,10 @@
 # relevel
 REPL for LevelDB
 
+## Requirements
+
+* LevelDB 1.7 or above
+
 ## Installation
 
 ```bash
