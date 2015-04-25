@@ -39,7 +39,7 @@ func main() {
 		},
 		{
 			Name:      "new",
-			ShortName: "new",
+			ShortName: "n",
 			Usage:     "Creates new db",
 			Action:    newCommand,
 		},
