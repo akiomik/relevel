@@ -1,0 +1,3 @@
+gom 'github.com/codegangsta/cli'
+gom 'github.com/jmhodges/levigo'
+gom 'github.com/peterh/liner'
