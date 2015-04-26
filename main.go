@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/jmhodges/levigo"
 	"github.com/peterh/liner"
@@ -56,7 +56,7 @@ func main() {
 func consoleCommand(c *cli.Context) {
 	db_name := c.Args().First()
 	if db_name == "" {
-		log.Fatal("DB name is not provided", db_name)
+		log.Error("DB name is not provided", db_name)
 		os.Exit(1)
 	}
 
@@ -98,14 +98,14 @@ func consoleCommand(c *cli.Context) {
 			}
 		})
 		if err != nil {
-			log.Fatal("Error reading line: ", err)
+			log.Error("Error reading line: ", err)
 			os.Exit(1)
 		}
 
 		return nil
 	})
 	if err != nil {
-		log.Fatal("Error db operation: ", err)
+		log.Error("Error db operation: ", err)
 		os.Exit(1)
 	}
 }
@@ -113,7 +113,7 @@ func consoleCommand(c *cli.Context) {
 func newCommand(c *cli.Context) {
 	db_name := c.Args().First()
 	if db_name == "" {
-		log.Fatal("DB is not provied", db_name)
+		log.Error("DB is not provied", db_name)
 		os.Exit(1)
 	}
 
@@ -124,7 +124,7 @@ func newCommand(c *cli.Context) {
 		return nil
 	})
 	if err != nil {
-		log.Fatal("Error db operation: ", err)
+		log.Error("Error db operation: ", err)
 		os.Exit(1)
 	}
 }
@@ -161,7 +161,7 @@ func startConsole(exec func(string)) error {
 
 		f, err := os.Create(historyFile)
 		if err != nil {
-			log.Fatal("Error writing history file: ", err)
+			log.Error("Error writing history file: ", err)
 		}
 
 		line.WriteHistory(f)
