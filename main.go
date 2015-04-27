@@ -30,59 +30,8 @@ func main() {
 	app.Author = appAuthor
 	app.Email = appEmail
 	app.Usage = appUsage
-	app.Commands = []cli.Command{
-		{
-			Name:      "console",
-			ShortName: "c",
-			Usage:     "Starts leveldb console",
-			Action:    consoleCommand,
-		},
-		{
-			Name:      "exec",
-			ShortName: "e",
-			Usage:     "Executes leveldb queries",
-			Action:    execCommand,
-		},
-		{
-			Name:      "new",
-			ShortName: "n",
-			Usage:     "Creates new db",
-			Action:    newCommand,
-		},
-		{
-			Name:      "version",
-			ShortName: "v",
-			Usage:     "Shows version",
-			Action:    cli.ShowVersion,
-		},
-	}
+	app.Commands = Commands
 	app.Run(os.Args)
-}
-
-func consoleCommand(c *cli.Context) {
-	db_name := c.Args().First()
-	if db_name == "" {
-		log.Error("DB name is not provided", db_name)
-		os.Exit(1)
-	}
-
-	opts := levigo.NewOptions()
-	err := operateDb(db_name, opts, func(db *levigo.DB) error {
-		err := startConsole(func(line string) {
-			query, args := queryParser(line)
-			queryHandler(query, args, db)
-		})
-		if err != nil {
-			log.Error("Error reading line: ", err)
-			os.Exit(1)
-		}
-
-		return nil
-	})
-	if err != nil {
-		log.Error("Error db operation: ", err)
-		os.Exit(1)
-	}
 }
 
 func queryParser(line string) (string, []string) {
@@ -132,50 +81,6 @@ func showQueryHelp() {
 	println("put <key> <value>")
 	println("delete <key>")
 	println("help")
-}
-
-func execCommand(c *cli.Context) {
-	db_name := c.Args().Get(0)
-	if db_name == "" {
-		log.Error("DB is not provied", db_name)
-		os.Exit(1)
-	}
-
-	line := c.Args().Get(1)
-	if line == "" {
-		log.Error("Query is not provied", line)
-		os.Exit(1)
-	}
-
-	opts := levigo.NewOptions()
-	err := operateDb(db_name, opts, func(db *levigo.DB) error {
-		query, args := queryParser(line)
-		queryHandler(query, args, db)
-		return nil
-	})
-	if err != nil {
-		log.Error("Error db operation: ", err)
-		os.Exit(1)
-	}
-}
-
-func newCommand(c *cli.Context) {
-	db_name := c.Args().First()
-	if db_name == "" {
-		log.Error("DB is not provied", db_name)
-		os.Exit(1)
-	}
-
-	opts := levigo.NewOptions()
-	opts.SetCreateIfMissing(true)
-
-	err := operateDb(db_name, opts, func(db *levigo.DB) error {
-		return nil
-	})
-	if err != nil {
-		log.Error("Error db operation: ", err)
-		os.Exit(1)
-	}
 }
 
 func startConsole(exec func(string)) error {
