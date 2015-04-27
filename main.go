@@ -14,7 +14,7 @@ import (
 
 var (
 	historyFile = "/tmp/." + appName + "_history"
-	commands    = []string{"GET", "PUT", "DELETE", "KEYS", "HELP"}
+	queries     = []string{"GET", "PUT", "DELETE", "KEYS", "HELP"}
 	appName     = "relevel"
 	appVersion  = "0.0.1"
 	appAuthor   = "Akiomi Kamakura"
@@ -36,6 +36,12 @@ func main() {
 			ShortName: "c",
 			Usage:     "Starts leveldb console",
 			Action:    consoleCommand,
+		},
+		{
+			Name:      "exec",
+			ShortName: "e",
+			Usage:     "Executes leveldb queries",
+			Action:    execCommand,
 		},
 		{
 			Name:      "new",
@@ -63,45 +69,88 @@ func consoleCommand(c *cli.Context) {
 	opts := levigo.NewOptions()
 	err := operateDb(db_name, opts, func(db *levigo.DB) error {
 		err := startConsole(func(line string) {
-			input := strings.Split(line, " ")
-			command := strings.ToLower(input[0])
-			args := input[1:]
-			switch {
-			case command == "help":
-				cli.ShowAppHelp(c) // TODO
-			case command == "keys":
-				executeKeys(db)
-			case command == "get":
-				if len(args) < 1 {
-					println("Key must be provided.")
-				}
-
-				executeGet(args[0], db)
-			case command == "put":
-				if len(args) < 2 {
-					println("Key and value must be provided.")
-					break
-				}
-
-				executePut(args[0], args[1], db)
-			case command == "delete":
-				if len(args) < 1 {
-					println("Key must be provided.")
-					break
-				}
-
-				executeDelete(args[0], db)
-			case line == "":
-				// nothing to do
-			default:
-				println("Unknown command: ", line)
-			}
+			query, args := queryParser(line)
+			queryHandler(query, args, db)
 		})
 		if err != nil {
 			log.Error("Error reading line: ", err)
 			os.Exit(1)
 		}
 
+		return nil
+	})
+	if err != nil {
+		log.Error("Error db operation: ", err)
+		os.Exit(1)
+	}
+}
+
+func queryParser(line string) (string, []string) {
+	input := strings.Split(line, " ")
+	query := strings.ToLower(input[0])
+	args := input[1:]
+	return query, args
+}
+
+func queryHandler(query string, args []string, db *levigo.DB) {
+	switch {
+	case query == "help":
+		showQueryHelp()
+	case query == "keys":
+		executeKeys(db)
+	case query == "get":
+		if len(args) < 1 {
+			println("Key must be provided.")
+			return
+		}
+
+		executeGet(args[0], db)
+	case query == "put":
+		if len(args) < 2 {
+			println("Key and value must be provided.")
+			return
+		}
+
+		executePut(args[0], args[1], db)
+	case query == "delete":
+		if len(args) < 1 {
+			println("Key must be provided.")
+			return
+		}
+
+		executeDelete(args[0], db)
+	case query == "":
+		// nothing to do
+	default:
+		println("Unknown query: ", query)
+	}
+}
+
+func showQueryHelp() {
+	println("keys")
+	println("get <key>")
+	println("put <key> <value>")
+	println("delete <key>")
+	println("help")
+}
+
+func execCommand(c *cli.Context) {
+	db_name := c.Args().Get(0)
+	if db_name == "" {
+		log.Error("DB is not provied", db_name)
+		os.Exit(1)
+	}
+
+	line := c.Args().Get(1)
+	if line == "" {
+		log.Error("Query is not provied", line)
+		os.Exit(1)
+	}
+
+	opts := levigo.NewOptions()
+	err := operateDb(db_name, opts, func(db *levigo.DB) error {
+		query, args := queryParser(line)
+		queryHandler(query, args, db)
 		return nil
 	})
 	if err != nil {
@@ -187,11 +236,11 @@ func showConsoleHeader() {
 }
 
 func consoleCompleter(line string) (c []string) {
-	for _, n := range commands {
-		if strings.HasPrefix(strings.ToLower(n), line) {
-			c = append(c, strings.ToLower(n)+" ")
-		} else if strings.HasPrefix(n, strings.ToUpper(line)) {
-			c = append(c, n+" ")
+	for _, q := range queries {
+		if strings.HasPrefix(strings.ToLower(q), line) {
+			c = append(c, strings.ToLower(q)+" ")
+		} else if strings.HasPrefix(q, strings.ToUpper(line)) {
+			c = append(c, q+" ")
 		}
 	}
 	return
