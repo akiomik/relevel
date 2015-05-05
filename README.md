@@ -30,8 +30,8 @@ $ relevel console awesome-data
 ### Use command-line interface
 
 ```bash
-# relevel console <name> <query>
-$ relevel console awesome-data "put banana monkey"
+# relevel exec <name> <query>
+$ relevel exec awesome-data "put banana monkey"
 ```
 
 ## Queries
