@@ -13,36 +13,51 @@ go get github.com/akiomik/relevel
 
 ## Usage
 
+### Create new leveldb data
+
 ```bash
-# create new database
-$ relevel new awesome-data
+# relevel new <name>
+relevel new awesome-data
+```
 
-# launch REPL
+### Launch leveldb REPL
+
+```bash
+# relevel console <name>
 $ relevel console awesome-data
-relevel - 0.0.1
+```
 
+### Use command-line interface
+
+```bash
+# relevel console <name> <query>
+$ relevel console awesome-data "put banana monkey"
+```
+
+## Queries
+
+* keys
+
+```
 relevel> keys
+```
 
-Found: 0 keys
+* get <key>
 
-relevel> put scala play
-Created: scala
+```
+relevel> get banana
+```
 
-relevel> put haskell yesod
-Created: haskell
+* put <key> <value>
 
-relevel> get scala
-play
+```
+relevel> put banana monkey
+```
 
-Got: scala
+* delete <key>
 
-relevel> keys
-haskell
-scala
-
-Found: 2 keys
-
-relevel>
+```
+relevel> delete banana
 ```
 
 ## Other solutions
