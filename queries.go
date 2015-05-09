@@ -8,9 +8,52 @@ import (
 	"github.com/jmhodges/levigo"
 )
 
-var (
-	queries = []string{"GET", "PUT", "DELETE", "KEYS", "HELP"}
-)
+type Query struct {
+	Name   string
+	Help   string
+	Action func([]string, *levigo.DB)
+}
+
+var queries = []Query{
+	getQuery,
+	putQuery,
+	deleteQuery,
+	keysQuery,
+	// avoid initialization loop
+	// helpQuery,
+}
+
+var allQuery = append(queries, helpQuery)
+
+var getQuery = Query{
+	Name:   "get",
+	Help:   "get <key>",
+	Action: executeGet,
+}
+
+var putQuery = Query{
+	Name:   "put",
+	Help:   "put <key> <value>",
+	Action: executePut,
+}
+
+var deleteQuery = Query{
+	Name:   "delete",
+	Help:   "delete <key>",
+	Action: executeDelete,
+}
+
+var keysQuery = Query{
+	Name:   "keys",
+	Help:   "keys",
+	Action: executeKeys,
+}
+
+var helpQuery = Query{
+	Name:   "help",
+	Help:   "help",
+	Action: showQueryHelp,
+}
 
 func queryParser(line string) (string, []string) {
 	input := strings.Split(line, " ")
@@ -20,59 +63,48 @@ func queryParser(line string) (string, []string) {
 }
 
 func queryHandler(query string, args []string, db *levigo.DB) {
-	switch {
-	case query == "help":
-		showQueryHelp()
-	case query == "keys":
-		executeKeys(db)
-	case query == "get":
-		if len(args) < 1 {
-			println("Key must be provided.")
-			return
+	if query == "" {
+		return
+	}
+
+	for _, q := range allQuery {
+		if query != q.Name {
+			continue
 		}
 
-		executeGet(args[0], db)
-	case query == "put":
-		if len(args) < 2 {
-			println("Key and value must be provided.")
-			return
-		}
+		q.Action(args, db)
+		return
+	}
 
-		executePut(args[0], args[1], db)
-	case query == "delete":
-		if len(args) < 1 {
-			println("Key must be provided.")
-			return
-		}
+	println("Unknown query: ", query)
+}
 
-		executeDelete(args[0], db)
-	case query == "":
-		// nothing to do
-	default:
-		println("Unknown query: ", query)
+func showQueryHelp(_ []string, _ *levigo.DB) {
+	println("help")
+
+	for _, q := range queries {
+		println(q.Help)
 	}
 }
 
-func showQueryHelp() {
-	println("keys")
-	println("get <key>")
-	println("put <key> <value>")
-	println("delete <key>")
-	println("help")
-}
-
 func queryCompleter(line string) (c []string) {
-	for _, q := range queries {
-		if strings.HasPrefix(strings.ToLower(q), line) {
-			c = append(c, strings.ToLower(q)+" ")
-		} else if strings.HasPrefix(q, strings.ToUpper(line)) {
-			c = append(c, q+" ")
+	for _, q := range allQuery {
+		if strings.HasPrefix(strings.ToUpper(q.Name), line) {
+			c = append(c, strings.ToLower(q.Name)+" ")
+		} else if strings.HasPrefix(q.Name, strings.ToLower(line)) {
+			c = append(c, q.Name+" ")
 		}
 	}
 	return
 }
 
-func executeGet(key string, db *levigo.DB) {
+func executeGet(args []string, db *levigo.DB) {
+	if len(args) < 1 {
+		println("Key must be provided.")
+		return
+	}
+	key := args[0]
+
 	ro := levigo.NewReadOptions()
 	defer ro.Close()
 
@@ -92,7 +124,14 @@ func executeGet(key string, db *levigo.DB) {
 	println("Got:", key)
 }
 
-func executePut(key string, value string, db *levigo.DB) {
+func executePut(args []string, db *levigo.DB) {
+	if len(args) < 2 {
+		println("Key and value must be provided.")
+		return
+	}
+	key := args[0]
+	value := args[1]
+
 	wo := levigo.NewWriteOptions()
 	defer wo.Close()
 
@@ -105,7 +144,7 @@ func executePut(key string, value string, db *levigo.DB) {
 	println("Created:", key)
 }
 
-func executeKeys(db *levigo.DB) {
+func executeKeys(_ []string, db *levigo.DB) {
 	ro := levigo.NewReadOptions()
 	ro.SetFillCache(false)
 
@@ -123,7 +162,13 @@ func executeKeys(db *levigo.DB) {
 	fmt.Printf("Found: %d keys\n", count)
 }
 
-func executeDelete(key string, db *levigo.DB) {
+func executeDelete(args []string, db *levigo.DB) {
+	if len(args) < 1 {
+		println("Key must be provided.")
+		return
+	}
+	key := args[0]
+
 	wo := levigo.NewWriteOptions()
 	defer wo.Close()
 
