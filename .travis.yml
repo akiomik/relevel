@@ -16,6 +16,8 @@ install:
 script:
   - $HOME/gopath/bin/gom install
   - $HOME/gopath/bin/gom test
+  - GOOS=darwin GOARCH=amd64 go build
+  - GOPATH=$HOME/gopath/src/github.com/akiomik/relevel/_vendor GOOS=darwin GOARCH=amd64 go build
 before_deploy:
   - go get github.com/mitchellh/gox
   - gox -build-toolchain
