@@ -60,8 +60,9 @@ relevel> put banana monkey
 relevel> delete banana
 ```
 
-## Other solutions
+## Alternatives
 * [ldb](https://github.com/hij1nx/ldb)
 * [lev](https://github.com/hij1nx/lev)
 * [RocksDB Ldb tool](https://github.com/facebook/rocksdb/wiki/Ldb-Tool)
 * [level-repl](https://github.com/lapwinglabs/leveldb-repl)
+* [LevelUI](https://github.com/hij1nx/levelui)
