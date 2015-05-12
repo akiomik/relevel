@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
+	log "github.com/golang/glog"
 	"github.com/jmhodges/levigo"
 )
 

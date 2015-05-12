@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/golang/glog"
 	"github.com/peterh/liner"
 )
 

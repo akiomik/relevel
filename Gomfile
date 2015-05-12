@@ -1,4 +1,4 @@
 gom 'github.com/codegangsta/cli'
 gom 'github.com/jmhodges/levigo'
 gom 'github.com/peterh/liner'
-gom 'github.com/Sirupsen/logrus'
+gom 'github.com/golang/glog'

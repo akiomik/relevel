@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/golang/glog"
 	"github.com/jmhodges/levigo"
 )
 
@@ -110,7 +110,7 @@ func executeGet(args []string, db *levigo.DB) {
 
 	value, err := db.Get(ro, []byte(key))
 	if err != nil {
-		log.Print("Error db operation:", err)
+		log.Info("Error db operation:", err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func executePut(args []string, db *levigo.DB) {
 
 	err := db.Put(wo, []byte(key), []byte(value))
 	if err != nil {
-		log.Print("Error db operation:", err)
+		log.Info("Error db operation:", err)
 		return
 	}
 
@@ -174,7 +174,7 @@ func executeDelete(args []string, db *levigo.DB) {
 
 	err := db.Delete(wo, []byte(key))
 	if err != nil {
-		log.Print("Error db operation:", err)
+		log.Info("Error db operation:", err)
 		return
 	}
 
