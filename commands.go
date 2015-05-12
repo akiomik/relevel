@@ -44,14 +44,14 @@ var commandVersion = cli.Command{
 }
 
 func doConsole(c *cli.Context) {
-	db_name := c.Args().First()
-	if db_name == "" {
-		log.Error("DB name is not provided", db_name)
+	dbName := c.Args().First()
+	if dbName == "" {
+		log.Error("DB name is not provided", dbName)
 		os.Exit(1)
 	}
 
 	opts := levigo.NewOptions()
-	err := operateDb(db_name, opts, func(db *levigo.DB) error {
+	err := operateDb(dbName, opts, func(db *levigo.DB) error {
 		err := startConsole(func(line string) {
 			query, args := queryParser(line)
 			queryHandler(query, args, db)
@@ -70,9 +70,9 @@ func doConsole(c *cli.Context) {
 }
 
 func doExec(c *cli.Context) {
-	db_name := c.Args().Get(0)
-	if db_name == "" {
-		log.Error("DB is not provied", db_name)
+	dbName := c.Args().Get(0)
+	if dbName == "" {
+		log.Error("DB is not provied", dbName)
 		os.Exit(1)
 	}
 
@@ -83,7 +83,7 @@ func doExec(c *cli.Context) {
 	}
 
 	opts := levigo.NewOptions()
-	err := operateDb(db_name, opts, func(db *levigo.DB) error {
+	err := operateDb(dbName, opts, func(db *levigo.DB) error {
 		query, args := queryParser(line)
 		queryHandler(query, args, db)
 		return nil
@@ -95,16 +95,16 @@ func doExec(c *cli.Context) {
 }
 
 func doNew(c *cli.Context) {
-	db_name := c.Args().First()
-	if db_name == "" {
-		log.Error("DB is not provied", db_name)
+	dbName := c.Args().First()
+	if dbName == "" {
+		log.Error("DB is not provied", dbName)
 		os.Exit(1)
 	}
 
 	opts := levigo.NewOptions()
 	opts.SetCreateIfMissing(true)
 
-	err := operateDb(db_name, opts, func(db *levigo.DB) error {
+	err := operateDb(dbName, opts, func(db *levigo.DB) error {
 		return nil
 	})
 	if err != nil {

@@ -26,8 +26,8 @@ func main() {
 	app.Run(os.Args)
 }
 
-func operateDb(db_name string, opts *levigo.Options, f func(db *levigo.DB) error) error {
-	db, err := levigo.Open(db_name, opts)
+func operateDb(dbName string, opts *levigo.Options, f func(db *levigo.DB) error) error {
+	db, err := levigo.Open(dbName, opts)
 	if err != nil {
 		return err
 	}
